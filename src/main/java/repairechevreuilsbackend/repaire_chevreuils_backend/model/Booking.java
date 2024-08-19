@@ -155,7 +155,7 @@ public class Booking {
         return this.babyNumber;
     }
                         
-    public AnimalType[] getAnimals() {
+    public AnimalType[] getAnimalType() {
         return this.animalType;
     }
 
@@ -255,7 +255,7 @@ public class Booking {
         this.guestNote = guestNote;
     }
                             
-    public void setAdmintNote(String adminNote) {
+    public void setAdminNote(String adminNote) {
         this.adminNote = adminNote;
     }
 
