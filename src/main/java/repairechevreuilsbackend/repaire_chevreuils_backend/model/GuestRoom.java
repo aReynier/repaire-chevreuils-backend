@@ -9,7 +9,6 @@ import jakarta.persistence.ManyToMany;
 
 import java.util.HashSet;
 import java.util.Set;
-
 @Entity
 public class GuestRoom {
     private @Id
@@ -109,7 +108,7 @@ public class GuestRoom {
         return this.touristTax;
     }
 
-    public double getAdditionnalTaxTax() {
+    public double getAdditionnalTax() {
         return this.additionnalTax;
     }
 
@@ -165,7 +164,7 @@ public class GuestRoom {
         this.touristTax = touristTax;
     }
     
-    public void setAdditionnalTax(int additionnalTax) {
+    public void setAdditionnalTax(double additionnalTax) {
         this.additionnalTax = additionnalTax;
     }
 
