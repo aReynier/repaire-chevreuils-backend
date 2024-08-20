@@ -15,28 +15,49 @@ import jakarta.persistence.ManyToOne;
 
 import java.util.Set;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
+@Schema(description = "Represents a booking made by a client for a guestroom.")
 public class Booking {
     private @Id
+    @Schema(description = "Unique identifier for the booking.", example = "0")
     @GeneratedValue Long bookingId;
-
+    @Schema(description = "client's date of arrival", example = "2024-08-20")
     private LocalDate arrivalDate;
+    @Schema(description = "client's date of departure", example = "2024-08-21")
     private LocalDate departureDate;
+    @Schema(description = "Scheduled hour of arrival.", example = "16:00")
     private LocalTime arrivalHour;
+    @Schema(description = "Indicates if the client opted for a late departure.", example = "true")
     private Boolean isLateDeparture;
+    @Schema(description = "Current status of the reservation. Possible values: PENDING, CONFIRMED, CHECKED_IN, CHECKED_OUT, CANCELED_BY_GUEST, CANCELED_BY_HOTEL, NO_SHOW, MODIFIED, COMPLETED", example = "PENDING")
     private ReservationStatus reservationStatus;
+    @Schema(description = "Current status of the payment. Possible values: PENDING, PARTIALLY_PAID, PAID, FAILED, REFUNDED", example = "PENDING")
     private PaymentStatus paymentStatus;
+    @Schema(description = "Amount paid by the client until now", example = "50.00")
     private double amountPaid;
+    @Schema(description = "Number of adult guests included in the booking.", example = "3")
     private int adultNumber;
+    @Schema(description = "Number of couples among the adult guests.", example = "1")
     private int couplesAmongAdults;
+    @Schema(description = "Number of children included in the booking.", example = "1")
     private int childNumber;
+    @Schema(description = "Number of babies included in the booking.", example = "1")
     private int babyNumber;
+    @Schema(description = "Number and species of animals accompanying the guests. Species could include DOG, CAT, BIRD, RODENT, OTHER.", example = "[\"DOG\", \"DOG\", \"OTHER\"]")
     private AnimalType[] animalType;
+    @Schema(description = "Special notes or considerations regarding the animals.", example = "L'un de mes chiens est allergique aux laitages.")
     private String animalNote;
-    private Boolean isBreakfast;
-    private Boolean isLunch;
-    private Boolean isDiner;
+    @Schema(description = "The number of breakfasts the guests will have during their stay. Free option", example = "0")
+    private int breakfastNumber;
+    @Schema(description = "The number of lunchs the guests will have during their stay. Payment at the end of the stay, separatly from room payment", example = "0")
+    private int lunchNumber;
+    @Schema(description = "The number of diners the guests will have during their stay. Payment at the end of the stay, separatly from room payment", example = "0")
+    private int dinerNumber;
+    @Schema(description = "Additional notes provided by the guest.", example = "J'ai une petite tortue avec moi.")
     private String guestNote;
+    @Schema(description = "Notes added by the owner regarding the guest or their stay.", example = "Le visiteur a une petite tortue avec lui, prévoir de la salade.")
     private String adminNote;
 
     @ManyToMany
@@ -48,7 +69,7 @@ public class Booking {
     private Set<GuestRoom> guestRooms = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "client_id", nullable = true)
     private Client client;
 
     Booking() {}
@@ -56,7 +77,7 @@ public class Booking {
     Booking(LocalDate arrivalDate, LocalDate departureDate, LocalTime arrivalHour,
     Boolean isLateDeparture, ReservationStatus reservationStatus, PaymentStatus paymentStatus,
     double amountPaid, int adultNumber, int couplesAmongAdults, int childNumber, int babyNumber,
-    AnimalType[] animalType, String animalNote, Boolean isBreakfast, Boolean isLunch, Boolean isDiner,
+    AnimalType[] animalType, String animalNote, int breakfastNumber, int lunchNumber, int dinerNumber,
     String guestNote, String adminNote) {
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
@@ -72,9 +93,9 @@ public class Booking {
         this.animalType = animalType;
         this.animalNote = animalNote;
         this.adultNumber = adultNumber;
-        this.isBreakfast = isBreakfast;
-        this.isLunch = isLunch;
-        this.isDiner = isDiner;
+        this.breakfastNumber = breakfastNumber;
+        this.lunchNumber = lunchNumber;
+        this.dinerNumber = dinerNumber;
         this.guestNote = guestNote;
         this.adminNote = adminNote;
     }
@@ -163,16 +184,16 @@ public class Booking {
         return this.animalNote;
     }
     
-    public Boolean getIsBreakfast() {
-        return this.isBreakfast;
+    public int getBreakfastNumber() {
+        return this.breakfastNumber;
     }
         
-    public Boolean getIsLunch() {
-        return this.isLunch;
+    public int getLunchNumber() {
+        return this.lunchNumber;
     }
             
-    public Boolean getIsDiner() {
-        return this.isDiner;
+    public int getDinerNumber() {
+        return this.dinerNumber;
     }
                 
     public String getGuestNote() {
@@ -183,7 +204,7 @@ public class Booking {
         return this.adminNote;
     }
 
-    public void setAdminId(Long bookingId) {
+    public void setBookingId(Long bookingId) {
         this.bookingId = bookingId;
     }
     
@@ -239,16 +260,16 @@ public class Booking {
         this.animalNote = animalNote;
     }
             
-    public void setIsBreakfast(Boolean isBreakfast) {
-        this.isBreakfast = isBreakfast;
+    public void setBreakfastNumber(int breakfastNumber) {
+        this.breakfastNumber = breakfastNumber;
     }
                 
-    public void setIsLunch(Boolean isLunch) {
-        this.isLunch = isLunch;
+    public void setLunchNumber(int lunchNumber) {
+        this.lunchNumber = lunchNumber;
     }
                     
-    public void setIsDiner(Boolean isDiner) {
-        this.isDiner = isDiner;
+    public void setDinerNumber(int dinerNumber) {
+        this.dinerNumber = dinerNumber;
     }
                         
     public void setGuestNote(String guestNote) {
@@ -274,8 +295,8 @@ public class Booking {
             && Objects.equals(this.adultNumber, booking.adultNumber) && Objects.equals(this.couplesAmongAdults, booking.couplesAmongAdults)
             && Objects.equals(this.childNumber, childNumber) && Objects.equals(this.babyNumber, booking.babyNumber)
             && Objects.equals(this.animalType, animalType) && Objects.equals(this.animalNote, booking.animalNote)
-            && Objects.equals(this.isBreakfast, isBreakfast) && Objects.equals(this.isLunch, booking.isLunch)
-            && Objects.equals(this.isDiner, isDiner) && Objects.equals(this.guestNote, booking.guestNote)
+            && Objects.equals(this.breakfastNumber, breakfastNumber) && Objects.equals(this.lunchNumber, booking.lunchNumber)
+            && Objects.equals(this.dinerNumber, dinerNumber) && Objects.equals(this.guestNote, booking.guestNote)
             && Objects.equals(this.adminNote, booking.adminNote);
     }
 
@@ -283,7 +304,7 @@ public class Booking {
     public int hashCode() {
         return Objects.hash(this.bookingId, this.arrivalDate, this.departureDate, this.arrivalHour, this.isLateDeparture, this.reservationStatus,
         this.paymentStatus, this.amountPaid, this.adultNumber, this.couplesAmongAdults, this.childNumber, this.babyNumber, this.animalType, this.animalNote,
-        this.isBreakfast, this.isLunch, this.isDiner, this.guestNote, this.adminNote );
+        this.breakfastNumber, this.lunchNumber, this.dinerNumber, this.guestNote, this.adminNote );
     }
 
     @Override
@@ -292,7 +313,7 @@ public class Booking {
         ", arrivalHour='" + this.arrivalHour + '\'' +  ", isLateDeparture='" + this.isLateDeparture + '\'' +  ", reservationStatus='" + this.reservationStatus + '\'' + 
         ", paymentStatus='" + this.paymentStatus + '\'' +  ", amountPaid='" + this.amountPaid + '\'' +  ", adultNumber='" + this.adultNumber + '\'' + 
         ", couplesAmongAdults='" + this.couplesAmongAdults + '\'' +  ", childNumber='" + this.childNumber + '\'' +  ", babyNumber='" + this.babyNumber + '\'' + 
-        ", animalType='" + this.animalType + '\'' +  ", animalNote='" + this.animalNote + '\'' +  ", isBreakfast='" + this.isBreakfast + '\'' + 
-        ", isLunch='" + this.isLunch + '\'' +  ", isDiner='" + this.isDiner + '\'' +  ", guestNote='" + this.guestNote + '\'' + ", adminNote='" + this.adminNote + '\'' + '}';
+        ", animalType='" + this.animalType + '\'' +  ", animalNote='" + this.animalNote + '\'' +  ", breakfastNumber='" + this.breakfastNumber + '\'' + 
+        ", lunchNumber='" + this.lunchNumber + '\'' +  ", dinerNumber='" + this.dinerNumber + '\'' +  ", guestNote='" + this.guestNote + '\'' + ", adminNote='" + this.adminNote + '\'' + '}';
     }
 }

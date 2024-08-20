@@ -2,19 +2,25 @@ package repairechevreuilsbackend.repaire_chevreuils_backend.model;
 
 import java.util.Objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
+@Schema(description = "Represents an admin user in the system.")
 public class Admin {
     private @Id
+    @Schema(description = "Unique identifier of the admin.", example = "1")
     @GeneratedValue Long adminId;
-
+    
+    @Schema(description = "Admin's email address.", example = "admin@example.com")
     private String email;
+
+    @Schema(description = "Admin's password.", example = "securePassword123")
     private String password;
 
-    Admin() {}
+    public Admin() {}
 
     Admin(String email, String password) {
         this.email = email;
