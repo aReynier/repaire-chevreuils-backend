@@ -1,6 +1,8 @@
 package repairechevreuilsbackend.repaire_chevreuils_backend.controller;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +21,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import repairechevreuilsbackend.repaire_chevreuils_backend.model.Booking;
 import repairechevreuilsbackend.repaire_chevreuils_backend.repository.BookingRepository;
+import repairechevreuilsbackend.repaire_chevreuils_backend.model.Client;
+import repairechevreuilsbackend.repaire_chevreuils_backend.repository.ClientRepository;
+import repairechevreuilsbackend.repaire_chevreuils_backend.model.GuestRoom;
+import repairechevreuilsbackend.repaire_chevreuils_backend.repository.GuestRoomRepository;
 import repairechevreuilsbackend.repaire_chevreuils_backend.exception.BookingNotFoundException;
 
 @RestController
 @Tag(name = "Booking operations", description = "Endpoints for handling room reservations, booking modifications, and cancellations.")
 public class BookingController {
     
-  private final BookingRepository repository;
+  private final BookingRepository bookingRepository;
+  private final ClientRepository clientRepository;
+  private final GuestRoomRepository guestRoomRepository;
 
-  BookingController(BookingRepository repository) {
-    this.repository = repository;
+  BookingController(BookingRepository bookingRepository,  ClientRepository clientRepository, GuestRoomRepository guestRoomRepository) {
+    this.bookingRepository = bookingRepository;
+    this.clientRepository = clientRepository;
+    this.guestRoomRepository = guestRoomRepository;
   }
 
   @GetMapping("/bookings")
@@ -42,7 +52,7 @@ public class BookingController {
     @ApiResponse(responseCode = "404", description = "Bookings not found")
   })
   List<Booking> all() {
-    return repository.findAll();
+    return bookingRepository.findAll();
   }
 
   @PostMapping("/bookings")
@@ -58,7 +68,26 @@ public class BookingController {
   })
   ResponseEntity<?> newBooking(@RequestBody Booking newBooking) {
     try {
-      Booking savedBooking = repository.save(newBooking);
+      Client client = newBooking.getClient();
+      Set<Long> guestRoomsIds = newBooking.getGuestRoomsIds();
+
+      Set<GuestRoom> guestRooms = new HashSet<>();
+      if (guestRoomsIds != null) {
+        for (Long guestRoomId : guestRoomsIds) {
+            GuestRoom existingGuestRoom = guestRoomRepository.findById(guestRoomId)
+                    .orElseThrow(() -> new RuntimeException("GuestRoom not found: " + guestRoomId));
+                    guestRooms.add(existingGuestRoom);
+        }
+        newBooking.setGuestRooms(guestRooms);
+      }
+
+      if (client != null) {
+        Client savedClient = clientRepository.save(client);
+        newBooking.setClient(savedClient);
+      }
+
+      Booking savedBooking = bookingRepository.save(newBooking);
+
       return ResponseEntity.status(HttpStatus.CREATED).body(savedBooking);
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating booking: " + e.getMessage());
@@ -77,7 +106,7 @@ public class BookingController {
   })
   Booking one(@PathVariable Long bookingId) {
     
-    return repository.findById(bookingId)
+    return bookingRepository.findById(bookingId)
       .orElseThrow(() -> new BookingNotFoundException(bookingId));
   }
 
@@ -94,7 +123,7 @@ public class BookingController {
   })
   Booking replaceBooking(@RequestBody Booking newBooking, @PathVariable Long bookingId) {
     
-    return repository.findById(bookingId)
+    return bookingRepository.findById(bookingId)
       .map(booking -> {
         booking.setArrivalDate(newBooking.getArrivalDate());
         booking.setDepartureDate(newBooking.getDepartureDate());
@@ -114,10 +143,10 @@ public class BookingController {
         booking.setDinerNumber(newBooking.getDinerNumber());
         booking.setGuestNote(newBooking.getGuestNote());
         booking.setAdminNote(newBooking.getAdminNote());
-        return repository.save(booking);
+        return bookingRepository.save(booking);
       })
       .orElseGet(() -> {
-        return repository.save(newBooking);
+        return bookingRepository.save(newBooking);
       });
   }
 
@@ -132,7 +161,7 @@ public class BookingController {
     @ApiResponse(responseCode = "404", description = "Could not find booking with id: + bookingId")
   })
   void deleteBooking(@PathVariable Long bookingId) {
-    repository.deleteById(bookingId);
+    bookingRepository.deleteById(bookingId);
   }
 }
 

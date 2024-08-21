@@ -73,7 +73,7 @@ public class GuestRoom {
         TINY_HOUSE
     }
 
-    public Long getGuestRoom() {
+    public Long getGuestRoomId() {
         return this.guestRoomId;
     }
 

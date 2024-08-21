@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Objects;
 
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -60,6 +61,30 @@ public class Booking {
     @Schema(description = "Notes added by the owner regarding the guest or their stay.", example = "Le visiteur a une petite tortue avec lui, prévoir de la salade.")
     private String adminNote;
 
+    @ManyToOne
+    @JoinColumn(name = "client_id", nullable = false)
+    @Schema(
+        description = "Guest who made the booking.",
+        example = """
+        {
+            "clientId": 0,
+            "firstName": "Jacques",
+            "lastName": "Durant",
+            "email": "Jacques.durant@mail.fr",
+            "phoneNumber": "+33 3 33 33 33 33",
+            "addressFirstLine": "53 rue Solférino",
+            "addressComplement": "appartement 2",
+            "addressZipCode": "59000",
+            "addressCity": "Lille",
+            "addressCountry": "France"
+        }
+    """)
+    private Client client;
+
+    @ElementCollection
+    @Schema(description = "IDs of the guest rooms associated with the booking.", example = "[1, 2, 3]")
+    private Set<Long> guestRoomsIds;
+
     @ManyToMany
     @JoinTable(
         name = "booking_guest_room",
@@ -68,13 +93,9 @@ public class Booking {
     )
     private Set<GuestRoom> guestRooms = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "client_id", nullable = true)
-    private Client client;
-
     Booking() {}
 
-    Booking(LocalDate arrivalDate, LocalDate departureDate, LocalTime arrivalHour,
+    public Booking(LocalDate arrivalDate, LocalDate departureDate, LocalTime arrivalHour,
     Boolean isLateDeparture, ReservationStatus reservationStatus, PaymentStatus paymentStatus,
     double amountPaid, int adultNumber, int couplesAmongAdults, int childNumber, int babyNumber,
     AnimalType[] animalType, String animalNote, int breakfastNumber, int lunchNumber, int dinerNumber,
@@ -204,8 +225,20 @@ public class Booking {
         return this.adminNote;
     }
 
+    public Client getClient() {
+        return this.client;
+    }
+
+    public Set<Long> getGuestRoomsIds() {
+        return this.guestRoomsIds;
+    }
+
     public void setBookingId(Long bookingId) {
         this.bookingId = bookingId;
+    }
+
+    public Set<GuestRoom> getGuestRooms() {
+        return guestRooms;
     }
     
     public void setArrivalDate(LocalDate arrivalDate) {
@@ -278,6 +311,18 @@ public class Booking {
                             
     public void setAdminNote(String adminNote) {
         this.adminNote = adminNote;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setGuestRoomsIds(Set<Long> guestRoomsIds) {
+        this.guestRoomsIds = guestRoomsIds;
+    }
+
+    public void setGuestRooms(Set<GuestRoom> guestRooms) {
+        this.guestRooms = guestRooms;
     }
 
     @Override
