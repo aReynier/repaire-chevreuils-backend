@@ -9,23 +9,40 @@ import jakarta.persistence.ManyToMany;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 @Entity
+@Schema(description = "Represents a guest room with its options, its price.")
 public class GuestRoom {
     private @Id
+    @Schema(description = "Unique identifier for the room.", example = "0")
     @GeneratedValue Long guestRoomId;
 
+    @Schema(description = "Name of the room.", example = "Chambre mimosas")
     private String name;
+    @Schema(description = "Description of the room.", example = "Jolie chambre")
     private String description;
+    @Schema(description = "Surface of the room.", example = "50.00")
     private double surfaceArea;
+    @Schema(description = "Type of the room FARM_ROOM or TINY_HOUSE.", example = "TINY_HOUSE")
     private RoomType roomType;
+    @Schema(description = "Pictures of the room.", example = "[\"image 1\", \"image 2\"]")
     private String[] pictures;
+    @Schema(description = "Basic number of adult beds.", example = "3")
     private int singleBedNumber;
+    @Schema(description = "Number of child bed which can be added.", example = "2")
     private int childBedNumber;
+    @Schema(description = "Number of child bed which can be added.", example = "2")
     private int babyBedNumber;
+    @Schema(description = "Equmpment of the room.", example = "[\"TV\", \"salle de bain\", \"produits de bain\"]")
     private String[] equipment;
+    @Schema(description = "Price per night.", example = "90.00")
     private double pricePerNight;
+    @Schema(description = "If the room is currently available.", example = "yes")
     private String disponibility;
+    @Schema(description = "Tourist tax of the city in percent per adult.", example = "20")
     private int touristTax;
+    @Schema(description = " Additionnal tourist tax of the city in euros per night.", example = "0.50")
     private double additionnalTax;
 
     @ManyToMany

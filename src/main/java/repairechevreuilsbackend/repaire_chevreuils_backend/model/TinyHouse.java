@@ -3,10 +3,12 @@ package repairechevreuilsbackend.repaire_chevreuils_backend.model;
 import java.util.Arrays;
 import java.util.Objects;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 
 @Entity
 public class TinyHouse extends GuestRoom {
+    @Schema(description = "Additionnal equimnent of the tiny houses.", example = "kitchenette")
     private String[] tinyHouseEquipment;
 
     TinyHouse() {}

@@ -11,20 +11,33 @@ import jakarta.persistence.OneToMany;
 
 import java.util.Set;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Entity
+@Schema(description = "Represents the guest who made a booking.")
 public class Client {
     
     private @Id
+    @Schema(description = "Unique identifier of the guest making the booking.", example = "0")
     @GeneratedValue Long clientId;
 
+    @Schema(description = "First name of the guest making the booking.", example = "Jacques")
     private String firstName;
+    @Schema(description = "Last name of the guest making the booking.", example = "Durant")
     private String lastName;
+    @Schema(description = "Email address of the guest making the booking.", example = "Jacques.durant@mail.fr")
     private String email;
+    @Schema(description = "Phone number of the guest making the booking, including country code.", example = "+33 3 33 33 33 33")
     private String phoneNumber;
+    @Schema(description = "Primary address line of the guest making the booking.", example = "53 rue Solférino")
     private String addressFirstLine;
+    @Schema(description = "Additional address information, such as apartment or suite number.", example = "appartement 2")
     private String addressComplement;
+    @Schema(description = "ZIP code or postal code of the guest's address.", example = "59000")
     private String addressZipCode;
+    @Schema(description = "City of the guest's address.", example = "Lille")
     private String addressCity;
+    @Schema(description = "Country of the guest's address.", example = "France")
     private String addressCountry;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
