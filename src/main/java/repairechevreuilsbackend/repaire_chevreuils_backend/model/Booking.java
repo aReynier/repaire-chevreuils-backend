@@ -72,7 +72,7 @@ public class Booking {
     @JoinColumn(name = "client_id", nullable = true)
     private Client client;
 
-    Booking() {}
+    public Booking() {}
 
     Booking(LocalDate arrivalDate, LocalDate departureDate, LocalTime arrivalHour,
     Boolean isLateDeparture, ReservationStatus reservationStatus, PaymentStatus paymentStatus,
